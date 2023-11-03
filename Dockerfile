@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
 COPY demo.mjs /app/demo.mjs
+COPY public/ /app/public
 COPY chi_sim.traineddata /app/chi_sim.traineddata
 RUN yarn
 EXPOSE 3000

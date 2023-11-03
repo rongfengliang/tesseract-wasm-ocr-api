@@ -1,11 +1,17 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import {fastify}  from "fastify";
+import path from "node:path"
+import { fastify } from "fastify";
 import { createOCREngine } from "tesseract-wasm";
 import { loadWasmBinary } from "tesseract-wasm/node";
 import sharp from "sharp";
-import  fileUpload  from 'fastify-file-upload'
+import fileUpload from 'fastify-file-upload'
+import  {fastifyStatic} from '@fastify/static'
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 async function loadImage(path) {
   const image = await sharp(path).ensureAlpha();
@@ -26,25 +32,16 @@ const engine = await createOCREngine({ wasmBinary });
 const model = readFileSync("chi_sim.traineddata");
 engine.loadModel(model);
 
-const app = fastify({logger: true});
+const app = fastify({ logger: true });
 
 app.register(fileUpload)
 
-app.get("/", async (request, reply) => {  
-  console.log(`starting index`, Date.now().toLocaleString());
-  const image = await loadImage("6.png");
-  engine.loadImage(image);
-  const text = engine.getText((progress) => {
-    process.stderr.write(`\rRecognizing text (${progress}% done)...`);
-  });
-  console.log(`ending`, Date.now().toLocaleString());
-  reply.send({
-    code:200,
-    text:text,
-  });
-});
+app.register(fastifyStatic, {
+  root: path.join(__dirname, 'public'),
+  prefix: '/', // optional: default '/'
+})
 
-app.post('/ocr',  async function (req, reply) {
+app.post('/ocr', async function (req, reply) {
   // some code to handle file
   console.log(`starting index`, Date.now().toLocaleString());
   const file = req.body.file
@@ -55,8 +52,8 @@ app.post('/ocr',  async function (req, reply) {
   });
   console.log(`ending`, Date.now().toLocaleString());
   reply.send({
-    code:200,
-    text:text,
+    code: 200,
+    text: text,
   });
 })
 
