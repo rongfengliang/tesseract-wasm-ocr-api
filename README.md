@@ -1,11 +1,26 @@
 # tesseract-wasm for web learning
 
 
-## build
+## running 
 
-* command
+* build docker image
 
 ```code
-yarn 
-yarn build
+docker-compose build
+```
+
+* running
+
+```code
+docker-compose  up -d
+```
+
+* test ocr  api
+
+```code
+curl  -X POST \
+  'http://localhost:3000/ocr' \
+  --header 'Accept: */*' \
+  --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+  --form 'file=@/Users/dalong/Downloads/WX20231103-175518@2x.png'
 ```
