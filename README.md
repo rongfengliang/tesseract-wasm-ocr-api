@@ -15,6 +15,12 @@ docker-compose build
 docker-compose  up -d
 ```
 
+* test web site 
+
+```code
+http://localhost:3000
+```
+
 * test ocr  api
 
 ```code
